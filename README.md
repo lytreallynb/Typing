@@ -1,167 +1,84 @@
-# Typing Practice Web Application
+Typing + Language Learning Backend (EN/ZH)
 
-A modern, feature-rich typing practice web application built with Next.js, TypeScript, and Tailwind CSS. This application helps users learn and improve their touch typing skills with interactive visual guides.
+This repo contains a minimal backend and content-pack format to power a typing + language learning app for English and Chinese.
 
-## Features
+What’s included
+- Sample content pack: travel phrases (ZH→EN) with pinyin
+- REST API endpoints to list packs and fetch items
+- Progress tracking: store attempts and compute WPM/CPM + CER
+- ETL stub to build packs from raw sources (optional, dependency-light)
+- Attribution generator for licenses/sources
 
-### Core Features
-- **On-screen Keyboard**: Visual keyboard with color-coded keys for each finger
-- **Real-time Key Highlighting**: Current key to press is highlighted on the keyboard
-- **Animated Hand Guides**: SVG hands show which finger to use for each key
-- **Live Typing Feedback**: Characters turn green (correct) or red (incorrect) as you type
-- **Comprehensive Stats**: Track WPM, accuracy, error count, and progress
-- **Multiple Lessons**: 10 pre-built lessons ranging from beginner to advanced
+Quick start
+1) (Optional) Create a Python venv
+   python3 -m venv .venv && source .venv/bin/activate
 
-### Typing Metrics
-- **WPM (Words Per Minute)**: Real-time calculation of typing speed
-- **Accuracy**: Percentage of correctly typed characters
-- **Error Count**: Number of mistakes made
-- **Progress**: Visual progress through the current lesson
+2) Install runtime deps (FastAPI + Uvicorn). If you don’t have network access now, skip and read “Offline mode”.
+   pip install fastapi uvicorn
 
-### User Interface
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
-- **Dark Mode Support**: Automatic dark mode based on system preferences
-- **Smooth Animations**: Fluid transitions for key presses and finger movements
-- **Color-Coded Fingers**: Each finger has a distinct color for easy learning
-  - Pink: Pinkies
-  - Purple: Ring fingers
-  - Blue: Middle fingers
-  - Green: Index fingers
-  - Gray: Thumbs
+3) Run the API
+   uvicorn server.main:app --reload
 
-## Lesson Types
+4) Try the endpoints
+   - List packs:        curl 'http://127.0.0.1:8000/packs'
+   - Pack items:        curl 'http://127.0.0.1:8000/packs/wikivoyage-travel-zh-en/items?limit=5'
+   - Post an attempt:
+     curl -X POST 'http://127.0.0.1:8000/attempts' \
+       -H 'Content-Type: application/json' \
+       -d '{"user_id":"u1","item_id":"wikitravel-0001","lang":"zh","typed_text":"你好！","target_text":"你好！","duration_ms":3000}'
+   - User progress:     curl 'http://127.0.0.1:8000/users/u1/progress'
 
-The application includes various lesson types:
+Offline mode
+- If you cannot install packages, you can still explore the data format in `packs/` and inspect the ETL and scripts. The app runtime requires FastAPI to serve HTTP.
 
-1. **Characters**: Practice individual characters and character combinations
-2. **Words**: Type complete words to build muscle memory
-3. **Sentences**: Practice with full sentences including punctuation
-4. **Mixed**: Combination of letters, numbers, and special characters
+Project layout
+- packs/                         Content packs (self-contained)
+  - <pack_id>/metadata.json      Pack metadata (license, source, tags)
+  - <pack_id>/items.jsonl        One JSON object per line (items)
+- server/
+  - main.py                      FastAPI app + endpoints
+  - packs.py                     Pack discovery and item loading
+  - metrics.py                   WPM/CPM, CER, heatmaps
+  - storage.py                   JSONL storage for attempts
+- etl/
+  - build_pack.py                Minimal ETL for CSV/JSON sources
+- scripts/
+  - generate_attributions.py     Produces ATTRIBUTIONS.md from packs
+- ATTRIBUTIONS.md                Generated attribution file
 
-## Getting Started
-
-### Prerequisites
-- Node.js 18.x or higher
-- npm or yarn
-
-### Installation
-
-1. Clone or download this repository
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Run the development server:
-```bash
-npm run dev
-```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-### Build for Production
-
-```bash
-npm run build
-npm start
-```
-
-## How to Use
-
-1. **Select a Lesson**: Click on any lesson card to load it
-2. **Start Typing**: Click on the typing area and begin typing
-3. **Watch the Guides**:
-   - The keyboard highlights which key to press next
-   - The hand display shows which finger to use
-   - Characters turn green when correct, red when incorrect
-4. **Track Progress**: Monitor your WPM, accuracy, and progress in real-time
-5. **Backspace to Correct**: Use Backspace to fix mistakes
-6. **Complete the Lesson**: Finish typing all characters to complete the lesson
-
-## Project Structure
-
-```
-typing/
-├── app/
-│   ├── globals.css          # Global styles
-│   ├── layout.tsx            # Root layout
-│   └── page.tsx              # Main page component
-├── components/
-│   ├── Keyboard.tsx          # On-screen keyboard component
-│   ├── HandsDisplay.tsx      # SVG hands with finger animations
-│   ├── TypingArea.tsx        # Main typing interface
-│   ├── StatsDisplay.tsx      # Statistics display
-│   └── LessonController.tsx  # Lesson selection interface
-├── data/
-│   ├── lessons.json          # Lesson content and metadata
-│   └── keyboardMapping.json  # Key-to-finger mappings
-├── types/
-│   └── lesson.ts             # TypeScript type definitions
-└── public/                   # Static assets
-```
-
-## Technology Stack
-
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: React 19
-- **SVG Graphics**: Inline SVG for hand animations
-
-## Customization
-
-### Adding New Lessons
-
-Edit `/data/lessons.json` and add a new lesson object:
-
-```json
+Content item schema (JSONL)
 {
-  "id": "lesson-custom",
-  "title": "Your Lesson Title",
-  "description": "Lesson description",
-  "difficulty": "beginner|intermediate|advanced",
-  "type": "characters|words|sentences|mixed",
-  "content": "The text to type..."
+  "id": "wikitravel-0001",
+  "type": "sentence",
+  "lang": "zh",
+  "text": "请问地铁站在哪里？",
+  "romanization": "qǐng wèn dì tiě zhàn zài nǎ lǐ?",
+  "translation": { "en": "Excuse me, where is the subway station?" },
+  "tags": ["travel", "directions", "A1"],
+  "difficulty": { "freq_band": 3 },
+  "source": "Wikivoyage phrasebook (demo sample)",
+  "license": "CC BY-SA 3.0"
 }
-```
 
-### Modifying Keyboard Layout
+Endpoints
+- GET /packs
+  Query params: lang, topic (optional)
+  Returns pack metadata and item counts.
 
-Edit `/data/keyboardMapping.json` to change which finger is used for each key.
+- GET /packs/{pack_id}/items
+  Query params: offset, limit, tag (optional)
+  Returns a slice of items from the pack.
 
-### Styling
+- POST /attempts
+  Body: { user_id, item_id, lang, typed_text, target_text, duration_ms, started_at? }
+  Computes WPM/CPM, CER, and stores attempt in data/attempts.jsonl.
 
-All components use Tailwind CSS. Modify the classes in component files or extend the theme in `tailwind.config.ts`.
+- GET /users/{user_id}/progress
+  Returns aggregates over attempts (mean WPM/CPM, CER, attempts count), plus per-pack breakdown.
 
-## Future Enhancements (Optional)
+Notes on licensing
+- Each item carries `source` and `license` fields. Keep these when building new packs. Some sources (e.g., CC BY-SA) require share-alike; follow their terms.
 
-- **Backend API**: Store user progress and statistics
-- **User Accounts**: Track progress across sessions
-- **Leaderboards**: Compare scores with other users
-- **Custom Lessons**: Create and share custom typing lessons
-- **Typing Games**: Gamify the typing experience
-- **Certificate Generation**: Award certificates for completed courses
-- **Touch Typing Course**: Structured curriculum for beginners
+ETL & translation
+- `etl/build_pack.py` can attach pinyin/OpenCC if optional libs are installed. For production, prefer pre-translating content and storing translations with source/engine fields.
 
-## Performance
-
-- Built with Next.js for optimal performance
-- Client-side rendering for responsive typing experience
-- Efficient state management with React hooks
-- Smooth 60fps animations using CSS transitions
-
-## Browser Support
-
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## License
-
-ISC
-
-## Contributing
-
-Feel free to submit issues and enhancement requests!

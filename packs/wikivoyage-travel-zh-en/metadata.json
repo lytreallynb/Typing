@@ -1,0 +1,10 @@
+{
+  "id": "wikivoyage-travel-zh-en",
+  "name": "Travel Phrases (ZH→EN) – Demo",
+  "languages": ["zh", "en"],
+  "license": "CC BY-SA 3.0",
+  "source": "Wikivoyage phrasebooks (demo sample). Not an official dump.",
+  "topics": ["travel", "greetings", "directions", "dining", "shopping"],
+  "notes": "Small hand-curated sample for demo purposes only."
+}
+
