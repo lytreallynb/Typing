@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafafa;
+  --foreground: #1a1a1a;
+  --accent: #3b82f6;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

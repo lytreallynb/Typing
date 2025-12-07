@@ -1,0 +1,82 @@
+[
+  {
+    "id": "lesson-1",
+    "title": "Home Row - Basic",
+    "description": "Practice the home row keys: asdf jkl;",
+    "difficulty": "beginner",
+    "type": "characters",
+    "content": "fff jjj fff jjj ddd kkk ddd kkk sss lll sss lll aaa ;;; aaa ;;; fj fj fj dk dk dk sl sl sl a; a; a;"
+  },
+  {
+    "id": "lesson-2",
+    "title": "Home Row - Words",
+    "description": "Type simple words using home row keys",
+    "difficulty": "beginner",
+    "type": "words",
+    "content": "ask fall sad lad all fad jak als flask salad flak"
+  },
+  {
+    "id": "lesson-3",
+    "title": "Top Row Introduction",
+    "description": "Learn the top row keys: qwert yuiop",
+    "difficulty": "beginner",
+    "type": "characters",
+    "content": "qqq ppp www ooo eee iii rrr uuu ttt yyy qp qp wo wo ei ei ru ru ty ty"
+  },
+  {
+    "id": "lesson-4",
+    "title": "Top Row - Words",
+    "description": "Practice words using top and home rows",
+    "difficulty": "intermediate",
+    "type": "words",
+    "content": "write quite type pour your wire trip royal poetry quote"
+  },
+  {
+    "id": "lesson-5",
+    "title": "Bottom Row Introduction",
+    "description": "Learn the bottom row keys: zxcv bnm,./",
+    "difficulty": "intermediate",
+    "type": "characters",
+    "content": "zzz /// xxx ... ccc ,,, vvv mmm bbb nnn zx zx cv cv bn bn m, m, ./ ./"
+  },
+  {
+    "id": "lesson-6",
+    "title": "Bottom Row - Words",
+    "description": "Practice all letter keys",
+    "difficulty": "intermediate",
+    "type": "words",
+    "content": "zone become civil maximum number brave context example zoom cabin"
+  },
+  {
+    "id": "lesson-7",
+    "title": "Number Row",
+    "description": "Practice typing numbers and symbols",
+    "difficulty": "intermediate",
+    "type": "characters",
+    "content": "111 222 333 444 555 666 777 888 999 000 12 23 34 45 56 67 78 89 90"
+  },
+  {
+    "id": "lesson-8",
+    "title": "Simple Sentences",
+    "description": "Type complete sentences with proper spacing",
+    "difficulty": "intermediate",
+    "type": "sentences",
+    "content": "The quick brown fox jumps over the lazy dog. Practice makes perfect. Type with precision and speed. Focus on accuracy first."
+  },
+  {
+    "id": "lesson-9",
+    "title": "Mixed Practice",
+    "description": "Combination of letters, numbers, and punctuation",
+    "difficulty": "advanced",
+    "type": "mixed",
+    "content": "Today is December 7, 2025. She scored 98.5% on her test. The package costs $49.99 plus tax. Email: user@example.com"
+  },
+  {
+    "id": "lesson-10",
+    "title": "Advanced Typing",
+    "description": "Complex sentences with varied punctuation",
+    "difficulty": "advanced",
+    "type": "sentences",
+    "content": "In the digital age, typing efficiently is essential for productivity. Whether you're writing emails, coding software, or creating documents, touch typing skills will serve you well. Practice daily to improve your speed and accuracy!"
+  }
+]
