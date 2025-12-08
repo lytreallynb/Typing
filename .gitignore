@@ -1,7 +1,8 @@
 __pycache__/
 .venv/
 *.pyc
-data/
+data/attempts.jsonl
+data/*.db
 .DS_Store
 node_modules/
 .next/
@@ -9,4 +10,3 @@ dist/
 build/
 .env*
 package-lock.json
-
