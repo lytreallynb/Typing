@@ -4,21 +4,35 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --ext js,jsx,ts,tsx",
+    "convert:resources": "node scripts/convertResources.mjs --out data"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-switch": "^1.2.6",
+    "adm-zip": "^0.5.16",
+    "bcrypt": "^6.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "csv-parse": "^6.1.0",
+    "framer-motion": "^12.23.25",
+    "lucide-react": "^0.556.0",
     "next": "^16.0.7",
+    "next-auth": "^4.24.13",
     "react": "^19.2.1",
-    "react-dom": "^19.2.1"
+    "react-dom": "^19.2.1",
+    "tailwind-merge": "^3.4.0",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.17",
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
@@ -26,7 +40,8 @@
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.0.7",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.17",
+    "prisma": "^5.17.0",
+    "tailwindcss": "^3.4.15",
     "typescript": "^5.9.3"
   }
 }

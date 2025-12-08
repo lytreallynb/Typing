@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String            @id @default(cuid())
+  email        String            @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime          @default(now())
+  collections  CollectionItem[]
+  histories    PracticeHistory[]
+  profile      Profile?
+  backgroundImage   String?
+  backgroundOpacity Float?
+}
+
+model Profile {
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  totalPracticeTime    Int       @default(0)
+  totalWordsTyped      Int       @default(0)
+  averageWPM           Float     @default(0)
+  accuracyStats        Float     @default(0)
+  difficultyPreference String?
+  lastActiveDate       DateTime?
+  user                 User      @relation(fields: [userId], references: [id])
+}
+
+model CollectionItem {
+  id                  String    @id @default(cuid())
+  userId              String
+  word                String
+  translation         String
+  mode                String
+  difficulty          String
+  sampleSentence      String
+  sentenceTranslation String
+  tags                String?
+  seenCount           Int       @default(0)
+  lastSeen            DateTime?
+  correctRate         Float     @default(0)
+  nextReviewDate      DateTime?
+  intervalDays        Float     @default(1)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  user                User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId, word, mode])
+}
+
+model PracticeHistory {
+  id             String   @id @default(cuid())
+  userId         String
+  mode           String
+  difficulty     String
+  itemsAttempted Int
+  wpm            Float
+  accuracy       Float
+  durationMs     Int
+  createdAt      DateTime @default(now())
+  metadata       String?
+  user           User     @relation(fields: [userId], references: [id])
+}

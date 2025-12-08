@@ -1,25 +1,76 @@
-Typing + Language Learning Backend (EN/ZH)
+Typing + Language Learning Web App (EN/ZH)
 
-This repo contains a minimal backend and content-pack format to power a typing + language learning app for English and Chinese.
+A comprehensive bilingual typing and language learning platform with gamification, progress tracking, and polished UX.
 
-What’s included
-- Sample content pack: travel phrases (ZH→EN) with pinyin
-- REST API endpoints to list packs and fetch items
-- Progress tracking: store attempts and compute WPM/CPM + CER
-- ETL stub to build packs from raw sources (optional, dependency-light)
+What's included
+- Full-stack Next.js + FastAPI application
+- SQLite database for scalable data storage
+- Achievement system with 14+ unlockable badges
+- Daily streak tracking for habit formation
+- Dark mode support with theme persistence
+- Sample content packs with travel phrases and Tatoeba examples
+- REST API for packs, progress, achievements, and streaks
+- External catalog importer for HSK/Tatoeba vocabulary
+- Sound profiles and background music
+- Visual keyboard and hand guides
+- IME support for Chinese character input
 - Attribution generator for licenses/sources
 
+Key Features
+
+Typing & Learning:
+- Character-by-character typing with real-time feedback
+- Support for English and Chinese (Simplified/Traditional)
+- IME composition event handling for Chinese input
+- Live translations and romanization (pinyin) display
+- Toggle between typing source text or translation
+- Visual keyboard highlighting and hand position guides
+- Real-time WPM, CPM, accuracy, and error tracking
+
+Gamification & Motivation:
+- 14+ achievements across 4 tiers (bronze, silver, gold, platinum)
+- Daily practice streak tracking with visual indicators
+- Automatic achievement unlocks after typing sessions
+- Progress milestones for speed, accuracy, and consistency
+- Bilingual practice rewards and Chinese mastery challenges
+
+User Experience:
+- Dark mode with system preference detection
+- Theme persistence across sessions
+- 5 sound profiles (Classic, Mechanical, Soft, Typewriter, Silent)
+- Background music with volume controls (3 lofi tracks)
+- Responsive design with polished UI
+- Loading states and error handling
+
+Data & Progress:
+- SQLite database for scalable storage
+- Comprehensive progress tracking (WPM, CPM, CER)
+- Per-pack statistics and performance trends
+- Attempt history with full metrics
+- Error heatmap data for weak character identification
+
 Quick start
+
+Backend Setup:
 1) (Optional) Create a Python venv
    python3 -m venv .venv && source .venv/bin/activate
 
-2) Install runtime deps (FastAPI + Uvicorn). If you don’t have network access now, skip and read “Offline mode”.
-   pip install fastapi uvicorn
+2) Install dependencies
+   pip install -r requirements.txt
 
-3) Run the API
+3) Run the API (http://127.0.0.1:8000)
    uvicorn server.main:app --reload
 
-4) Try the endpoints
+Frontend Setup:
+1) Install dependencies
+   npm install
+
+2) Run the development server (http://localhost:3000)
+   npm run dev
+
+3) Open your browser and navigate to http://localhost:3000
+
+Try the API endpoints
    - List packs:        curl 'http://127.0.0.1:8000/packs'
    - Pack items:        curl 'http://127.0.0.1:8000/packs/wikivoyage-travel-zh-en/items?limit=5'
    - Post an attempt:
@@ -30,21 +81,42 @@ Quick start
 
 Offline mode
 - If you cannot install packages, you can still explore the data format in `packs/` and inspect the ETL and scripts. The app runtime requires FastAPI to serve HTTP.
+- The Next.js UI now calls the backend for packs, so set `NEXT_PUBLIC_API_BASE_URL` (defaults to `http://127.0.0.1:8000`).
+- `NEXT_PUBLIC_USER_ID` controls which user profile progress is fetched for (defaults to `demo-user`).
+- Background music streams from royalty-free Pixabay tracks; audio loads only after you toggle it in the Sound menu.
 
 Project layout
-- packs/                         Content packs (self-contained)
-  - <pack_id>/metadata.json      Pack metadata (license, source, tags)
-  - <pack_id>/items.jsonl        One JSON object per line (items)
-- server/
-  - main.py                      FastAPI app + endpoints
-  - packs.py                     Pack discovery and item loading
-  - metrics.py                   WPM/CPM, CER, heatmaps
-  - storage.py                   JSONL storage for attempts
-- etl/
-  - build_pack.py                Minimal ETL for CSV/JSON sources
-- scripts/
-  - generate_attributions.py     Produces ATTRIBUTIONS.md from packs
-- ATTRIBUTIONS.md                Generated attribution file
+- app/                           Next.js application directory
+  - page.tsx                     Main application page
+  - layout.tsx                   Root layout with theme provider
+  - globals.css                  Global styles with dark mode
+- components/                    React components
+  - TypingArea.tsx               Core typing functionality
+  - LessonController.tsx         Pack/lesson selection
+  - ProgressOverview.tsx         Stats and streak display
+  - AchievementBadge.tsx         Achievement system UI
+  - ThemeProvider.tsx            Dark mode context
+  - ThemeToggle.tsx              Theme switcher button
+  - Keyboard.tsx                 Visual keyboard display
+  - HandsDisplay.tsx             Finger position guide
+  - StatsDisplay.tsx             Real-time typing metrics
+  - SoundSettings.tsx            Audio controls
+- server/                        FastAPI backend
+  - main.py                      API endpoints
+  - database.py                  SQLite database layer
+  - achievements.py              Achievement system logic
+  - packs.py                     Pack discovery and loading
+  - metrics.py                   WPM/CPM/CER calculation
+  - external_sources.py          Remote catalog fetching
+- packs/                         Content packs
+  - <pack_id>/metadata.json      Pack metadata
+  - <pack_id>/items.jsonl        Lesson items
+- data/                          Application data
+  - typing.db                    SQLite database (auto-created)
+- types/                         TypeScript type definitions
+- utils/                         Utility functions and API client
+- requirements.txt               Python dependencies
+- package.json                   Node.js dependencies
 
 Content item schema (JSONL)
 {
@@ -60,25 +132,54 @@ Content item schema (JSONL)
   "license": "CC BY-SA 3.0"
 }
 
-Endpoints
+API Endpoints
+
+Content Packs:
 - GET /packs
   Query params: lang, topic (optional)
   Returns pack metadata and item counts.
 
 - GET /packs/{pack_id}/items
   Query params: offset, limit, tag (optional)
-  Returns a slice of items from the pack.
+  Returns paginated items from the pack.
 
+Typing Attempts:
 - POST /attempts
-  Body: { user_id, item_id, lang, typed_text, target_text, duration_ms, started_at? }
-  Computes WPM/CPM, CER, and stores attempt in data/attempts.jsonl.
+  Body: { user_id, item_id, lang, typed_text, target_text, duration_ms, pack_id? }
+  Computes metrics, updates streak, checks achievements.
+  Returns: { ok, attempt_id, metrics, streak, new_achievements }
+
+User Management:
+- POST /users
+  Body: { user_id, username, email? }
+  Creates a new user account.
+
+- GET /users/{user_id}
+  Returns user profile information.
+
+- GET /users/{user_id}/attempts
+  Query params: pack_id, limit, offset (optional)
+  Returns paginated typing attempt history.
 
 - GET /users/{user_id}/progress
-  Returns aggregates over attempts (mean WPM/CPM, CER, attempts count), plus per-pack breakdown.
+  Returns overall stats, per-pack breakdown, and streak data.
+
+- GET /users/{user_id}/streak
+  Returns current streak and longest streak.
+
+- GET /users/{user_id}/achievements
+  Returns all achievements (earned and locked).
+
+External Content:
+- GET /external/sources
+  Lists remote vocabulary catalogs (HSK, Tatoeba).
+
+- GET /external/sources/{source_id}
+  Fetches items from remote source.
+  Returns: { pack, items }
 
 Notes on licensing
 - Each item carries `source` and `license` fields. Keep these when building new packs. Some sources (e.g., CC BY-SA) require share-alike; follow their terms.
 
 ETL & translation
 - `etl/build_pack.py` can attach pinyin/OpenCC if optional libs are installed. For production, prefer pre-translating content and storing translations with source/engine fields.
-

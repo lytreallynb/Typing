@@ -1,0 +1,9 @@
+{
+  "id": "tatoeba-phrases-en-zh",
+  "name": "Everyday Phrases (EN→ZH) – Demo",
+  "languages": ["en", "zh"],
+  "license": "CC BY 2.0",
+  "source": "Tatoeba community sentences (demo subset)",
+  "topics": ["daily", "conversation", "basics"],
+  "notes": "Small illustrative slice of bilingual data"
+}
